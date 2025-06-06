@@ -1,0 +1,62 @@
+# kubernetes/api.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transcription-api
+  namespace: transcription-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: transcription-api
+  template:
+    metadata:
+      labels:
+        app: transcription-api
+    spec:
+      containers:
+      - name: api
+        image: transcription-service:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: database-secret
+              key: url
+        - name: LLM_API_URL
+          value: "http://ollama-service:11434"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transcription-api-service
+  namespace: transcription-service
+spec:
+  selector:
+    app: transcription-api
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: LoadBalancer
