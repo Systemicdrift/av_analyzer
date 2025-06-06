@@ -22,6 +22,7 @@ services:
   # Ollama for local LLM
   ollama:
     image: ollama/ollama:latest
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull llama3:8b && wait"]
     ports:
       - "11434:11434"
     volumes:

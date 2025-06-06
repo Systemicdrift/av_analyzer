@@ -42,7 +42,6 @@ clean-build:
 
 setup-llama:
 	@echo "Downloading model..."
-	docker exec -it $(docker ps --filter "ancestor=ollama/ollama" --format "{{.ID}}") ollama pull llama3:8b
+	docker exec -it av_analyzer-ollama-1 ollama pull llama3:8b
 
-
-setup-all: clean-build setup-llama
+setup-all: clean-build
