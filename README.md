@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a POC to infer the meaning of a video or audio file based on the speech contained therein. Works by user uploading a sample video/audio file, transcribing the speech, and using the llm to analyze the transcript.
+This project is a POC to infer the meaning of a video or audio file based on the speech contained therein. Works by user uploading a sample video/audio file, transcribing the speech, and using the llm to analyze the transcript. Built with the help of claude sonnet.
 
 ## Stack
 - WhisperAI (via:faster_whisper)
