@@ -5,9 +5,9 @@
 This project is a POC to infer the meaning of a video or audio file based on the speech contained therein. Works by user uploading a sample video/audio file, transcribing the speech, and using the llm to analyze the transcript. Built with the help of claude sonnet.
 
 ## Stack
-- WhisperAI (via:faster_whisper)
-- llama (llama3:8b)
-- Language: Python, Typescript
+- Transcriber: WhisperAI (faster_whisper)
+- LLM: llama (llama3:8b)
+- Languages: Python, Typescript
 - Frameworks: FastAPI, React
 - Build: UV, Yarn, Vite
 - Container: Docker
