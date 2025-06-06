@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class LLMService:
     def __init__(self,
                  model_url: str = None,
-                 model_name: str = "llama3",
+                 model_name: str = "llama3:8b",
                  api_key: str = None):
         """
         Initialize LLM service
