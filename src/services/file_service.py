@@ -1,7 +1,6 @@
 # services/file_service.py
 import mimetypes
 from pathlib import Path
-# import magic
 import mimetypes
 from typing import Optional
 
@@ -47,9 +46,8 @@ class FileService:
         return False
 
     def get_file_type(self, file_path: str) -> Optional[str]:
-        """Get the actual MIME type of a file using python-magic"""
+        """Get the actual MIME type of a file"""
         try:
-            # return magic.from_file(file_path, mime=True)
             mimetypes.guess_type(file_path)
         except Exception:
             # Fallback to mimetypes
