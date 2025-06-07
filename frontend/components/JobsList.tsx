@@ -1,4 +1,3 @@
-
 // src/components/JobsList.tsx
 import React from 'react';
 import { Clock, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
@@ -10,18 +9,18 @@ interface JobsListProps {
   onReanalyze: (jobId: number, newPrompt: string) => void;
 }
 
-const JobsList: React.FC<JobsListProps> = ({ jobs, onJobSelect, onReanalyze }) => {
+const JobsList: React.FC<JobsListProps> = ({ jobs, onJobSelect }) => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="text-success" />;
       case 'failed':
-        return <XCircle className="w-4 h-4 text-red-500" />;
+        return <XCircle className="text-error" />;
       case 'processing':
       case 'analyzing':
-        return <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" />;
+        return <RefreshCw className="text-primary animate-spin" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
+        return <Clock className="text-base-content" />;
     }
   };
 
@@ -31,7 +30,7 @@ const JobsList: React.FC<JobsListProps> = ({ jobs, onJobSelect, onReanalyze }) =
 
   if (jobs.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center text-base-content">
         <p>No jobs yet. Upload a file to get started.</p>
       </div>
     );
@@ -42,34 +41,24 @@ const JobsList: React.FC<JobsListProps> = ({ jobs, onJobSelect, onReanalyze }) =
       {jobs.map((job) => (
         <div
           key={job.id}
-          className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
           onClick={() => onJobSelect(job)}
+          className="card border border-base-200 hover:bg-base-100 cursor-pointer"
         >
-          <div className="flex-1">
-            <div className="flex items-center space-x-2 mb-1">
-              {getStatusIcon(job.status)}
-              <span className="font-medium text-gray-900">
-                {job.filename}
-              </span>
-              <span className="text-xs text-gray-500 capitalize">
-                {job.status}
-              </span>
+          <div className="flex justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                {getStatusIcon(job.status)}
+                <span className="font-medium">{job.filename}</span>
+                <span className="text-xs text-base-content capitalize">{job.status}</span>
+              </div>
+              <p className="text-sm text-base-content">{job.analysis_prompt}</p>
+              <p className="text-xs text-base-content">{formatDate(job.created_at)}</p>
             </div>
-            <p className="text-sm text-gray-600 truncate">
-              {job.analysis_prompt}
-            </p>
-            <p className="text-xs text-gray-500">
-              {formatDate(job.created_at)}
-            </p>
-          </div>
 
-          {job.status === 'completed' && (
-            <div className="flex space-x-2">
-              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                Complete
-              </span>
-            </div>
-          )}
+            {job.status === 'completed' && (
+              <div className="badge badge-success badge-outline text-xs">Complete</div>
+            )}
+          </div>
         </div>
       ))}
     </div>

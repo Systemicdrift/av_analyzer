@@ -8,10 +8,7 @@ interface TranscriptionResultsProps {
   onReanalyze: (jobId: number, newPrompt: string) => void;
 }
 
-const TranscriptionResults: React.FC<TranscriptionResultsProps> = ({
-  job,
-  onReanalyze,
-}) => {
+const TranscriptionResults: React.FC<TranscriptionResultsProps> = ({ job, onReanalyze }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newPrompt, setNewPrompt] = useState(job.analysis_prompt);
   const [copiedTranscript, setCopiedTranscript] = useState(false);
@@ -41,23 +38,19 @@ const TranscriptionResults: React.FC<TranscriptionResultsProps> = ({
 
   if (job.status === 'failed') {
     return (
-      <div className="text-center py-8">
-        <div className="text-red-500 mb-2">
-          <FileText className="w-12 h-12 mx-auto mb-2" />
-          <p className="font-medium">Processing Failed</p>
-        </div>
-        {job.error_message && (
-          <p className="text-sm text-gray-600">{job.error_message}</p>
-        )}
+      <div className="text-center text-error">
+        <FileText className="mx-auto" />
+        <p className="font-semibold">Processing Failed</p>
+        {job.error_message && <p>{job.error_message}</p>}
       </div>
     );
   }
 
   if (job.status === 'processing' || job.status === 'analyzing') {
     return (
-      <div className="text-center py-8">
-        <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-        <p className="text-gray-600">
+      <div className="text-center text-base-content">
+        <div className="animate-spin border-4 border-primary border-t-transparent rounded-full mx-auto" />
+        <p>
           {job.status === 'processing' ? 'Transcribing audio...' : 'Analyzing content...'}
         </p>
       </div>
@@ -66,8 +59,8 @@ const TranscriptionResults: React.FC<TranscriptionResultsProps> = ({
 
   if (!job.transcript) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        <FileText className="w-12 h-12 mx-auto mb-2" />
+      <div className="text-center text-base-content">
+        <FileText className="mx-auto" />
         <p>No results yet. Upload a file to get started.</p>
       </div>
     );
@@ -77,84 +70,86 @@ const TranscriptionResults: React.FC<TranscriptionResultsProps> = ({
     <div className="space-y-6">
       {/* Transcript Section */}
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center">
-            <FileText className="w-5 h-5 text-blue-500 mr-2" />
-            <h3 className="font-medium">Transcript</h3>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-2">
+            <FileText className="text-primary" />
+            <h3 className="font-semibold">Transcript</h3>
           </div>
           <button
             onClick={() => copyToClipboard(job.transcript!, 'transcript')}
-            className="flex items-center text-sm text-gray-500 hover:text-gray-700"
+            className="btn btn-sm btn-ghost"
           >
             {copiedTranscript ? (
-              <Check className="w-4 h-4 mr-1" />
+              <>
+                <Check className="mr-1" />
+                Copied!
+              </>
             ) : (
-              <Copy className="w-4 h-4 mr-1" />
+              <>
+                <Copy className="mr-1" />
+                Copy
+              </>
             )}
-            {copiedTranscript ? 'Copied!' : 'Copy'}
           </button>
         </div>
-        <div className="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">
-            {job.transcript}
-          </p>
+        <div className="bg-base-200 rounded-xl overflow-y-auto">
+          <p className="whitespace-pre-wrap">{job.transcript}</p>
         </div>
       </div>
 
       {/* Analysis Section */}
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center">
-            <Brain className="w-5 h-5 text-purple-500 mr-2" />
-            <h3 className="font-medium">Analysis</h3>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-2">
+            <Brain className="text-secondary" />
+            <h3 className="font-semibold">Analysis</h3>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setIsEditing(!isEditing)}
-              className="flex items-center text-sm text-gray-500 hover:text-gray-700"
+              className="btn btn-sm btn-outline btn-neutral"
             >
-              <Edit2 className="w-4 h-4 mr-1" />
+              <Edit2 className="mr-1" />
               Edit Prompt
             </button>
             {job.analysis_result && (
               <button
                 onClick={() => copyToClipboard(job.analysis_result!, 'analysis')}
-                className="flex items-center text-sm text-gray-500 hover:text-gray-700"
+                className="btn btn-sm btn-ghost"
               >
                 {copiedAnalysis ? (
-                  <Check className="w-4 h-4 mr-1" />
+                  <>
+                    <Check className="mr-1" />
+                    Copied!
+                  </>
                 ) : (
-                  <Copy className="w-4 h-4 mr-1" />
+                  <>
+                    <Copy className="mr-1" />
+                    Copy
+                  </>
                 )}
-                {copiedAnalysis ? 'Copied!' : 'Copy'}
               </button>
             )}
           </div>
         </div>
 
-        {/* Analysis Prompt Editor */}
         {isEditing && (
-          <div className="mb-4 p-4 bg-blue-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Analysis Prompt
-            </label>
+          <div className="bg-base-200 rounded-xl">
+            <label className="block font-medium">Analysis Prompt</label>
             <textarea
               value={newPrompt}
               onChange={(e) => setNewPrompt(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="textarea textarea-bordered w-full"
               rows={3}
             />
-            <div className="flex justify-end space-x-2 mt-2">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-              >
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setIsEditing(false)} className="btn btn-sm btn-ghost">
                 Cancel
               </button>
               <button
                 onClick={handleReanalyze}
                 disabled={!newPrompt.trim()}
-                className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+                className="btn btn-sm btn-primary"
               >
                 Re-analyze
               </button>
@@ -162,14 +157,11 @@ const TranscriptionResults: React.FC<TranscriptionResultsProps> = ({
           </div>
         )}
 
-        {/* Analysis Result */}
-        <div className="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
+        <div className="bg-base-200 rounded-xl overflow-y-auto">
           {job.analysis_result ? (
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">
-              {job.analysis_result}
-            </p>
+            <p className="whitespace-pre-wrap">{job.analysis_result}</p>
           ) : (
-            <p className="text-gray-500 italic">Analysis in progress...</p>
+            <p className="italic">Analysis in progress...</p>
           )}
         </div>
       </div>

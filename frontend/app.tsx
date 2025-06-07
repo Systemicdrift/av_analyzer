@@ -1,6 +1,13 @@
-// src/App.tsx
 import React, { useState, useCallback } from 'react';
-import { Upload, FileText, Brain, Clock, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import {
+  Upload,
+  FileText,
+  Brain,
+  Clock,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+} from 'lucide-react';
 import FileUpload from './components/FileUpload';
 import TranscriptionResults from './components/TranscriptionResults';
 import JobsList from './components/JobsList';
@@ -21,8 +28,6 @@ const App: React.FC = () => {
     try {
       const response: UploadResponse = await uploadFile(file, analysisPrompt);
       setCurrentJob(response);
-
-      // Start polling for job completion
       pollJobStatus(response.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
@@ -37,9 +42,8 @@ const App: React.FC = () => {
         const job = await getJobStatus(jobId);
         setCurrentJob(job);
 
-        // Update jobs list
-        setJobs(prev => {
-          const index = prev.findIndex(j => j.id === jobId);
+        setJobs((prev) => {
+          const index = prev.findIndex((j) => j.id === jobId);
           if (index >= 0) {
             const newJobs = [...prev];
             newJobs[index] = job;
@@ -49,13 +53,12 @@ const App: React.FC = () => {
           }
         });
 
-        // Continue polling if job is still processing
         if (job.status === 'processing' || job.status === 'analyzing') {
-          setTimeout(poll, 2000); // Poll every 2 seconds
+          setTimeout(poll, 2000);
         }
       } catch (err) {
         console.error('Failed to poll job status:', err);
-        setTimeout(poll, 5000); // Retry in 5 seconds on error
+        setTimeout(poll, 5000);
       }
     };
 
@@ -74,77 +77,68 @@ const App: React.FC = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
+        return <CheckCircle className="w-5 h-5 text-success" />;
       case 'failed':
-        return <XCircle className="w-5 h-5 text-red-500" />;
+        return <XCircle className="w-5 h-5 text-error" />;
       case 'processing':
       case 'analyzing':
-        return <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" />;
+        return <RefreshCw className="w-5 h-5 text-info animate-spin" />;
       default:
         return <Clock className="w-5 h-5 text-gray-500" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-base-200">
+      <div className="max-w-screen-lg mx-auto px-4 py-8">
         <header className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-blue-600 rounded-lg">
-              <Brain className="w-8 h-8 text-white" />
+            <div className="p-3 bg-primary rounded-lg text-primary-content">
+              <Brain className="w-8 h-8" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              AI Media Transcription & Analysis
-            </h1>
+            <h1 className="text-3xl font-bold">AI Media Transcription & Analysis</h1>
           </div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Upload your audio or video files to get AI-powered transcriptions and intelligent analysis
+          <p className="text-base-content/70">
+            Upload your audio or video files to get AI-powered transcriptions and intelligent analysis.
           </p>
         </header>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-red-500" />
-              <p className="text-red-700">{error}</p>
-            </div>
+          <div className="alert alert-error shadow-lg mb-6">
+            <XCircle className="w-5 h-5" />
+            <span>{error}</span>
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Upload Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Upload className="w-5 h-5 text-blue-600" />
-                Upload Media File
-              </h2>
-              <FileUpload
-                onUpload={handleFileUpload}
-                isUploading={isUploading}
-              />
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <div className="card bg-base-100 shadow">
+              <div className="card-body">
+                <h2 className="card-title">
+                  <Upload className="w-5 h-5 text-primary" />
+                  Upload Media File
+                </h2>
+                <FileUpload onUpload={handleFileUpload} isUploading={isUploading} />
+              </div>
             </div>
 
-            {/* Current Job Results */}
             {currentJob && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-green-600" />
-                  Results
-                </h2>
-                <TranscriptionResults
-                  job={currentJob}
-                  onReanalyze={handleReanalyze}
-                />
+              <div className="card bg-base-100 shadow">
+                <div className="card-body">
+                  <h2 className="card-title">
+                    <FileText className="w-5 h-5 text-success" />
+                    Results
+                  </h2>
+                  <TranscriptionResults job={currentJob} onReanalyze={handleReanalyze} />
+                </div>
               </div>
             )}
           </div>
 
-          {/* Jobs List Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-purple-600" />
+          <div className="card bg-base-100 shadow">
+            <div className="card-body">
+              <h2 className="card-title">
+                <Clock className="w-5 h-5 text-info" />
                 Recent Jobs
               </h2>
               <JobsList

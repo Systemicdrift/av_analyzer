@@ -48,15 +48,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload, isUploading }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* File Drop Zone */}
+      {/* Drop Zone */}
       <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+        className={`card cursor-pointer ${
           dragOver
-            ? 'border-blue-400 bg-blue-50'
+            ? 'border-blue-400 bg-blue-100'
             : selectedFile
-            ? 'border-green-400 bg-green-50'
-            : 'border-gray-300 hover:border-gray-400'
-        }`}
+            ? 'border-success bg-success bg-opacity-10'
+            : 'border-base-300 hover:border-base-content'
+        } border-2 border-dashed p-6 text-center`}
         onDrop={handleDrop}
         onDragOver={(e) => {
           e.preventDefault();
@@ -65,32 +65,26 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload, isUploading }) => {
         onDragLeave={() => setDragOver(false)}
       >
         {selectedFile ? (
-          <div className="flex items-center justify-center gap-3">
-            <File className="w-8 h-8 text-green-600" />
-            <div className="text-left">
-              <p className="font-medium text-green-700">{selectedFile.name}</p>
-              <p className="text-sm text-green-600">
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-              </p>
+          <div className="flex justify-between gap-3">
+            <div className="flex gap-3">
+              <File className="text-success" />
+              <div>
+                <p className="font-semibold text-success">{selectedFile.name}</p>
+                <p className="text-sm text-success">
+                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={clearFile}
-              className="p-1 hover:bg-red-100 rounded"
-            >
-              <X className="w-5 h-5 text-red-500" />
+            <button type="button" onClick={clearFile} className="btn btn-primary">
+              <X />
             </button>
           </div>
         ) : (
-          <div>
-            <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-700 mb-2">
-              Drop your media file here or click to browse
-            </p>
-            <p className="text-sm text-gray-500">
-              Supports MP3, MP4, WAV, M4A, FLAC files
-            </p>
-          </div>
+          <>
+            <Upload className="text-base-content mx-auto mb-3" />
+            <p className="font-semibold">Drop your file here or click to browse</p>
+            <p className="text-sm text-base-content">Supports MP3, MP4, WAV, M4A, FLAC</p>
+          </>
         )}
       </div>
 
@@ -106,41 +100,41 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload, isUploading }) => {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full py-2 px-4 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          className="btn btn-outline w-full"
         >
           Choose File
         </button>
       )}
 
-      {/* Analysis Prompt */}
+      {/* Prompt */}
       <div>
-        <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-2">
-          Analysis Prompt
+        <label htmlFor="prompt" className="label">
+          <span className="label-text">Analysis Prompt</span>
         </label>
         <textarea
           id="prompt"
           value={analysisPrompt}
           onChange={(e) => setAnalysisPrompt(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className="textarea textarea-bordered w-full"
           rows={3}
-          placeholder="Describe how you want the AI to analyze the transcribed content..."
+          placeholder="Describe how you want the AI to analyze the content..."
         />
       </div>
 
-      {/* Submit Button */}
+      {/* Submit */}
       <button
         type="submit"
         disabled={!selectedFile || !analysisPrompt.trim() || isUploading}
-        className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+        className="btn btn-primary w-full disabled:btn-disabled"
       >
         {isUploading ? (
           <>
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span className="loading loading-spinner"></span>
             Processing...
           </>
         ) : (
           <>
-            <Upload className="w-4 h-4" />
+            <Upload />
             Upload & Analyze
           </>
         )}
