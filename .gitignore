@@ -1,3 +1,4 @@
+dist
 node_modules
 .ollama
 .DS_Store
